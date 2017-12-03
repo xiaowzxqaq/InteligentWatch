@@ -28,3 +28,16 @@ enum ShowList{
 	Schedule
 
 };
+
+
+/*
+	Enum: Buttons
+	Description: Describe which button is clicked 
+*/
+enum Buttons{
+	
+	Home,		
+	ButtonUP,			
+	ButtopDown		
+
+};
