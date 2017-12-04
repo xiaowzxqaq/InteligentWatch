@@ -30,13 +30,13 @@ enum ShowList{
 };
 
 enum Week {
+	Sun,
 	Mon,
 	Tue,
 	Wed,
 	Tru,
 	Fri,
-	Sat,
-	Sun
+	Sat
 };
 
 
