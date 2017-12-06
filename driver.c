@@ -1,9 +1,20 @@
-#include <stdio.h>
+#include "struct.h"
 
 
 
 int DisplayDriver(int state){
+    switch (state){
 
+        case MainWin:
+            break;
+        case Menu:
+            break;
+        case SetTime:
+            break;
+        case Schedule:
+            break;
+
+    }
 
 
 }
@@ -129,7 +140,61 @@ int CalWeek(Time *pTime) {
 }
 
 
-int ButtonClicked(int state, int button){
-
-
+int ButtonSet(int button,  Time *pTime,  int* pSetState){
+    if(Home == button){
+        if(MINUTE == *pSetState){
+            return FINISH;
+        }
+        *pSetState += 1;
+        return NEXT;
+    }
+    if(ButtonUP == button){
+        switch (*pSetState){
+            case YEAR:
+                pTime->year += 1;
+                break;
+            case MONTH:
+                pTime->month += 1;
+                JudgeMonthEn(pTime);
+                break;
+            case DATE:
+                pTime->date += 1;
+                JudgeDateEn(pTime);
+                break;
+            case HOUR:
+                pTime->hour += 1;
+                JudgeHourEn(pTime);
+                break;
+            case MINUTE:
+                pTime->minute += 1;
+                JudgeMinuteEn(pTime);
+                break;
+        }
+        return CONTINUE;
+    }
+    if(ButtonDown == button){
+        switch (*pSetState){
+            case YEAR:
+                pTime->year -= 1;
+                break;
+            case MONTH:
+                pTime->month -= 1;
+                JudgeMonthEn(pTime);
+                break;
+            case DATE:
+                pTime->date -= 1;
+                JudgeDateEn(pTime);
+                break;
+            case HOUR:
+                pTime->hour -= 1;
+                JudgeHourEn(pTime);
+                break;
+            case MINUTE:
+                pTime->minute -= 1;
+                JudgeMinuteEn(pTime);
+                break;
+        }
+        return CONTINUE;
+    }
+    return ERROR;
 }
