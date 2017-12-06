@@ -5,7 +5,7 @@
 	Description: Describe the calendar and current time 
 */
 typedef struct Time{
-	
+
 	int year;
 	int month;
 	int date;
@@ -27,6 +27,16 @@ enum ShowList{
 	SetTime,		
 	Schedule
 
+};
+
+enum Week {
+	Sun,
+	Mon,
+	Tue,
+	Wed,
+	Tru,
+	Fri,
+	Sat
 };
 
 
