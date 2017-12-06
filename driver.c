@@ -32,6 +32,7 @@ int UpdateTime(Time *pTime){
             }
         }
     }
+    CalWeek(pTime);
     return 0;
 }
 
