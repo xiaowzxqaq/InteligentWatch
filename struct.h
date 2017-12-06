@@ -57,7 +57,10 @@ enum Buttons{
 
 };
 
-
+/*
+	Enum: SetState
+	Description: Describe the state of setting time 
+*/
 enum SetState{
 	
 	ERROR,
