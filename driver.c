@@ -138,17 +138,42 @@ int CalWeek(Time *pTime) {
     pTime -> week = week;
     return 0;
 }
-
-
+/*
+    Input: 
+        button: which button is clicked
+        pTime: pointer to the Time Struct
+        pSetState: the marking state of SetState, change which to set
+    Output:
+        NEXT: change to next state
+        CONTINUE: waiting for other input
+        FINISH: change to MainWin
+        ERROR: unkonw error
+    Description:
+        According to which button is cliced and set time
+    Author: Yin
+*/
 int ButtonSet(int button,  Time *pTime,  int* pSetState){
-    if(Home == button){
-        if(MINUTE == *pSetState){
+    if(Home == button || HomeL == button){
+        /* State change */
+        if(MINUTE == *pSetState || HomeL == button){
             return FINISH;
         }
         *pSetState += 1;
         return NEXT;
     }
+    if(ButtonUPL == *pSetState){
+        if(YEAR == *pSetState){
+            return FINISH;
+        }
+        else{
+            *pSetState -= 1;
+            return NEXT;
+        }
+    }
+
+    /* up button clicked*/
     if(ButtonUP == button){
+        /* Set time */
         switch (*pSetState){
             case YEAR:
                 pTime->year += 1;
@@ -172,7 +197,9 @@ int ButtonSet(int button,  Time *pTime,  int* pSetState){
         }
         return CONTINUE;
     }
+    /* down button clicked */
     if(ButtonDown == button){
+        /* Set time */
         switch (*pSetState){
             case YEAR:
                 pTime->year -= 1;

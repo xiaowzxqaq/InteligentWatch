@@ -53,8 +53,11 @@ enum Buttons{
 	
 	Home,		
 	ButtonUP,			
-	ButtonDown		
-
+	ButtonDown,		
+	HomeL,
+	ButtonUPL,
+	ButtonDownL
+	
 };
 
 /*
