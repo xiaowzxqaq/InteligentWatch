@@ -29,6 +29,11 @@ enum ShowList{
 
 };
 
+
+/*
+	Enum: Week
+	Description: Describe which day of a week 
+*/
 enum Week {
 	Sun,
 	Mon,
@@ -48,6 +53,23 @@ enum Buttons{
 	
 	Home,		
 	ButtonUP,			
-	ButtopDown		
+	ButtonDown		
 
+};
+
+/*
+	Enum: SetState
+	Description: Describe the state of setting time 
+*/
+enum SetState{
+	
+	ERROR,
+	YEAR,
+	MONTH,
+	DATE,
+	HOUR,
+	MINUTE,
+	NEXT,
+	CONTINUE,
+	FINISH
 };
