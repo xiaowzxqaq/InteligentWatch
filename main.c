@@ -56,6 +56,7 @@ enum ShowList{
 	Schedule
 
 };
+
 /*
 	Enum: Week
 	Description: Describe which day of a week 
@@ -69,9 +70,11 @@ enum Week {
 	Fri,
 	Sat
 };
+
 /*
 	Enum: Buttons
 	Description: Describe which button is clicked 
+	Gloable Variable Used:keyState
 */
 enum Buttons{
 	
@@ -83,9 +86,11 @@ enum Buttons{
 	ButtonDownL
 	
 };
+
 /*
 	Enum: SetState
 	Description: Describe the state of setting time 
+	Gloable Variable Used:setState
 */
 enum SetState{
 	
@@ -99,12 +104,28 @@ enum SetState{
 	CONTINUE,
 	FINISH
 };
-/************************************/
 
+/*
+	Enum: StateMachine
+	Description: Judge which button is clicked and return the state 
+	Gloable Variable Used:setState current keyCurrent keyState
+*/
+enum StateMachine{
+    NONE = 0xf0,
+    CLICKED,
+    LCLICKED
+};
+/************************************/
 
 /************Constant Define*********/
 #define high 1
 #define low 0 
+#define HIGH 1
+#define LOW 0 
+#define MINSCAN 1
+#define MAXSCAN 10
+
+#define FITST_LINE 0B00001110
 /***********************************/
 
 /************Timer******************/
@@ -120,6 +141,9 @@ enum SetState{
 #define DC (PORTAbits.RA3)
 #define SCL (PORTAbits.RA0)
 #define SDA (PORTAbits.RA1)
+#define UPBUT (PORTAbits.RA4)
+#define HOME (PORTAbits.RA5)
+#define DOWNBUT (PORTAbits.RA6)
 /***********************************/
 
 
@@ -129,16 +153,21 @@ void Initial_LY096BG30();
 void Delay_50ms(unsigned int Del_50ms);
 void Delay_1ms(unsigned int Del_1ms);
 void fill_picture(unsigned char fill_Data);
-void Picture_1();
+void Picture_MainWin();
 void Write_SPI_Command(unsigned char ucCmd);
 void Write_SPI_Data(unsigned char ucData);
-
+int DisplayDriver(char state);
 /**************Time*************/
 int UpdateTime(Time *pTime);
 
 /**************Show*************/
 void ShowLineDate(char y);
 void ShowLineTime(char y);
+int ButtonSet(char button,  Time *pTime);
+
+/**************Button*************/
+char KeyState();
+char ScanKey();
 
 
 /***********************Initial code*********************/
@@ -176,7 +205,36 @@ void Initial_LY096BG30()
 /*********************************************************/
 
 /***********************Picture Constant******************/
-unsigned char BigShow[3][11][12]={
+
+
+
+const unsigned char SmallShow[2][11][8]={
+0x00, 0xF0, 0x18, 0x0C, 0x0C, 0x18, 0xF0, 0x00,
+0x00, 0x00, 0x00, 0xC0, 0x7E, 0x00, 0x00, 0x00,
+0x00, 0x30, 0x18, 0x0C, 0x04, 0x8C, 0xF8, 0x60,
+0x00, 0x0C, 0x86, 0x82, 0xC6, 0x64, 0x38, 0x00,
+0x00, 0x00, 0xE0, 0x18, 0x00, 0xFC, 0x00, 0x00,
+0x00, 0x08, 0xFE, 0x88, 0x88, 0x88, 0x08, 0x00,
+0x00, 0x00, 0xC0, 0xF0, 0x98, 0x86, 0x00, 0x00,
+0x00, 0x04, 0x04, 0x04, 0x84, 0x7C, 0x0C, 0x00,
+0x00, 0xF8, 0x8C, 0x84, 0x84, 0x44, 0x7C, 0x00,
+0x00, 0xF8, 0x8C, 0x84, 0x84, 0x44, 0xFC, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x1F, 0x10, 0x20, 0x20, 0x30, 0x0F, 0x00, 
+0x00, 0x00, 0x00, 0x7F, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x30, 0x38, 0x2C, 0x26, 0x23, 0x21, 0x00,
+0x00, 0x20, 0x41, 0x41, 0x61, 0x31, 0x1E, 0x00,
+0x00, 0x03, 0x03, 0x02, 0x02, 0x7F, 0x02, 0x00,
+0x00, 0x10, 0x21, 0x21, 0x30, 0x18, 0x0F, 0x00,
+0x00, 0x1F, 0x23, 0x20, 0x30, 0x18, 0x0F, 0x00,     
+0x00, 0x00, 0x00, 0x7C, 0x07, 0x00, 0x00, 0x00,
+0x38, 0x4E, 0x43, 0x43, 0x42, 0x46, 0x3C, 0x00,
+0x00, 0x00, 0x00, 0x60, 0x38, 0x0E, 0x03, 0x00,
+0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00
+
+};
+
+const unsigned char BigShow[3][11][12]={
 0x00, 0x80, 0xF0, 0xF8, 0x78, 0x18, 0x18, 0x18, 0xF8, 0xF0, 0xC0, 0x00,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xFE, 0xFE, 0x1E, 0x00, 0x00,
 0x00, 0x30, 0xF8, 0xFC, 0x7E, 0x1E, 0x1E, 0x1E, 0x3E, 0xFC, 0xFC, 0xF8,
@@ -211,49 +269,44 @@ unsigned char BigShow[3][11][12]={
 0x00, 0x00, 0x40, 0x70, 0x38, 0x1E, 0x0F, 0x07, 0x01, 0x00, 0x00, 0x00,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-unsigned char SmallShow[2][11][8]={
-0x00, 0xF0, 0x18, 0x0C, 0x0C, 0x18, 0xF0, 0x00,
-0x00, 0x00, 0x00, 0xC0, 0x7E, 0x00, 0x00, 0x00,
-0x00, 0x30, 0x18, 0x0C, 0x04, 0x8C, 0xF8, 0x60,
-0x00, 0x0C, 0x86, 0x82, 0xC6, 0x64, 0x38, 0x00,
-0x00, 0x00, 0xE0, 0x18, 0x00, 0xFC, 0x00, 0x00,
-0x00, 0x08, 0xFE, 0x88, 0x88, 0x88, 0x08, 0x00,
-0x00, 0x00, 0xC0, 0xF0, 0x98, 0x86, 0x00, 0x00,
-0x00, 0x04, 0x04, 0x04, 0x84, 0x7C, 0x0C, 0x00,
-0x00, 0xF8, 0x8C, 0x84, 0x84, 0x44, 0x7C, 0x00,
-0x00, 0xF8, 0x8C, 0x84, 0x84, 0x44, 0xFC, 0x00,
-0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-0x00, 0x1F, 0x10, 0x20, 0x20, 0x30, 0x0F, 0x00, 
-0x00, 0x00, 0x00, 0x7F, 0x00, 0x00, 0x00, 0x00,
-0x00, 0x30, 0x38, 0x2C, 0x26, 0x23, 0x21, 0x00,
-0x00, 0x20, 0x41, 0x41, 0x61, 0x31, 0x1E, 0x00,
-0x00, 0x03, 0x03, 0x02, 0x02, 0x7F, 0x02, 0x00,
-0x00, 0x10, 0x21, 0x21, 0x30, 0x18, 0x0F, 0x00,
-0x00, 0x1F, 0x23, 0x20, 0x30, 0x18, 0x0F, 0x00,     
-0x00, 0x00, 0x00, 0x7C, 0x07, 0x00, 0x00, 0x00,
-0x38, 0x4E, 0x43, 0x43, 0x42, 0x46, 0x3C, 0x00,
-0x00, 0x00, 0x00, 0x60, 0x38, 0x0E, 0x03, 0x00,
-0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00
-
-};
 unsigned char weeker[2][8] = {
 0xFC, 0x04, 0xA4, 0xF4, 0xF4, 0xA4, 0x04, 0xFC,
 0x3F, 0x00, 0x0E, 0x0A, 0x0A, 0x0E, 0x20, 0x7F
 };
+
+
+/******************Gloable Variables**********************/
 Time time;
 Time *pTime = &time;
+
+char mainState = MainWin;
+char current = NONE;
+char keyState = NONE;
+char key = NONE;
+char count = 0;
+char keyCurrent =NONE;
+
+char setState = 0;
 /*********************************************************/
 
 
 void interrupt isr(void)
 {
-    PIR1bits.TMR1IF = 0;   
-    UpdateTime(pTime);
-    Picture_1();
+    
 
+    if(PIR1bits.TMR1IF == 1){
+        PIR1bits.TMR1IF = 0;   
+        //UpdateTime(pTime);
+        key = ScanKey();
+        KeyState();
+        ButtonSet(keyState, pTime);
+    }
+    if(INTCONbits.TMR0IF == 1){
+        INTCONbits.TMR0IF = 0;
+        DisplayDriver(mainState);
+    }
+    
 
-  
-    return;
 }
 
 
@@ -285,14 +338,25 @@ void main(void)
     PIR1bits.TMR1IF = 0;
   
     PIE1bits.TMR1IE = 1;
+    
+    INTCONbits.IOCIE = 1;
+    //Timer0 
+    INTCONbits.TMR0IF = 0;
+    OPTION_REG  =   0b00000000;
+
       
     TMR1H = TMRHVALUE;
     TMR1L = TMRLVALUE;
   
-    T1CON = 0b00000101;
-    
-    
-    
+    T1CON = 0b00001101;
+    T1CONbits.T1CKPS = 0b00;
+    TRISAbits.TRISA4 = 1;
+    TRISAbits.TRISA5 = 1;
+    TRISAbits.TRISA6 = 1;
+    WPUAbits.WPUA4 = 1;
+    WPUAbits.WPUA5 = 1;
+    WPUAbits.WPUA6 = 1;
+            
         while(1){
 
         }
@@ -627,7 +691,7 @@ void fill_picture(unsigned char fill_Data)
 /******************************************
 // picture
 ******************************************/
-void Picture_1()
+void Picture_MainWin()
 {
   char x,y;
 
@@ -700,4 +764,217 @@ void Delay_1ms(unsigned int Del_1ms)        //
     {   
         for(j=0;j<123;j++);
     }
+}
+
+int DisplayDriver(char state){
+    switch (state){
+        case MainWin:
+            Picture_MainWin();
+            break;
+        case Menu:
+            break;
+        case SetTime:
+            break;
+        case Schedule:
+            break;
+
+    }
+
+
+}
+/*
+	Output: keyState
+	Description: State Machine, return button clicked state
+
+*/
+char KeyState(){
+    switch (current){
+        case NONE:
+            if(NONE == key){
+                keyState = NONE;
+                break;
+            }else{
+                count = 1;
+                current = CLICKED;
+                keyCurrent = key;
+                break;
+            }
+        case CLICKED:
+            if(NONE == key){
+                if(count >= MINSCAN && count <= MAXSCAN){
+                    count = 0;
+                    current = NONE;
+                    switch(keyCurrent){
+                        case Home:
+                            keyState = Home;
+                            keyCurrent =NONE;
+                            break;
+                        case ButtonUP:
+                            keyState = ButtonUP;
+                            keyCurrent =NONE;
+                            break;
+                        case ButtonDown:
+                            keyState = ButtonDown;
+                            keyCurrent =NONE;
+                            break;
+                    }
+                    break;
+                }else if(current < MINSCAN){
+                    count = 0;
+                    current = NONE;
+                    keyCurrent =NONE;
+                    break;
+                }
+             }else if(keyCurrent == key){
+                ++count;
+                if(count > MAXSCAN){
+                    current = LCLICKED;
+                    switch(keyCurrent){
+                        case Home:
+                            keyState = HomeL;
+                            break;
+                        case ButtonUP:
+                            keyState = ButtonUPL;
+                            break;
+                        case ButtonDown:
+                            keyState = ButtonDownL;
+                            break;
+                    }
+                }
+                break;
+             }else{
+                count = 0;
+                current = NONE;
+                keyCurrent =NONE;
+                keyState = NONE;
+                break;
+            }
+        case LCLICKED:
+            if(NONE == key){
+                count = 0;
+                current = NONE;
+                keyCurrent =NONE;
+                keyState = NONE;
+                break;
+            }
+            break;
+    }
+
+}
+
+/*
+	Output: key
+	Description: Scan IO and return which key is clicked
+
+*/
+char ScanKey(){
+    //tmp test whether two or more buttons are clicked
+    //(0 -> three buttons) (1-> two buttons)  (2 -> one buttons) (3 -> no button)
+    char tmp = UPBUT + DOWNBUT + HOME;
+    if(2 == tmp){
+        if(0 == UPBUT){
+            return ButtonUP;
+        }
+        if(0 == HOME){
+            return Home;
+        }
+        if(0 == DOWNBUT){
+            return ButtonDown;
+        }
+        return ERROR;
+    }else{
+        return NONE;
+    }
+
+}
+
+/*
+    Input: 
+        button: which button is clicked
+        pTime: pointer to the Time Struct
+        pSetState: the marking state of SetState, change which to set
+    Output:
+        NEXT: change to next state
+        CONTINUE: waiting for other input
+        FINISH: change to MainWin
+        ERROR: unkonw error
+    Description:
+        According to which button is cliced and set time
+    Author: Yin
+*/
+
+int ButtonSet(char button,  Time *pTime){
+
+    if(Home == button || HomeL == button){
+        /* State change */
+        if(MINUTE == setState || HomeL == button){
+            setState = 0;
+            return FINISH;
+        }
+        ++setState;
+        return NEXT;
+    }
+    if(ButtonUPL == button){
+        if(YEAR == setState){
+            return FINISH;
+        }
+        else{
+            setState -= 1;
+            return NEXT;
+        }
+    }
+
+    /* up button clicked*/
+    if(ButtonUP == button){
+        /* Set time */
+        switch (setState){
+            case YEAR:
+                pTime->year += 1;
+                break;
+            case MONTH:
+                pTime->month += 1;
+                JudgeMonthEn(pTime);
+                break;
+            case DATE:
+                pTime->date += 1;
+                JudgeDateEn(pTime);
+                break;
+            case HOUR:
+                pTime->hour += 1;
+                JudgeHourEn(pTime);
+                break;
+            case MINUTE:
+                pTime->minute += 1;
+                JudgeMinuteEn(pTime);
+                break;
+        }
+        return CONTINUE;
+    }
+    /* down button clicked */
+    if(ButtonDown == button){
+        /* Set time */
+        switch (setState){
+            case YEAR:
+                pTime->year -= 1;
+                break;
+            case MONTH:
+                pTime->month -= 1;
+                JudgeMonthEn(pTime);
+                break;
+            case DATE:
+                pTime->date -= 1;
+                JudgeDateEn(pTime);
+                break;
+            case HOUR:
+                pTime->hour -= 1;
+                JudgeHourEn(pTime);
+                break;
+            case MINUTE:
+                pTime->minute -= 1;
+                JudgeMinuteEn(pTime);
+                break;
+        }
+        return CONTINUE;
+    }
+    return ERROR;
 }
