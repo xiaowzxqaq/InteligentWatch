@@ -118,8 +118,6 @@ enum StateMachine{
 /************************************/
 
 /************Constant Define*********/
-#define high 1
-#define low 0 
 #define HIGH 1
 #define LOW 0 
 #define MINSCAN 1
@@ -276,16 +274,21 @@ unsigned char weeker[2][8] = {
 
 
 /******************Gloable Variables**********************/
-Time time;
+//Time which needed to be updated
+ime time;
 Time *pTime = &time;
 
+//State Mark
 char mainState = MainWin;
+
+//Button Mark
 char current = NONE;
 char keyState = NONE;
 char key = NONE;
 char count = 0;
 char keyCurrent =NONE;
 
+//Set time state
 char setState = 0;
 /*********************************************************/
 
@@ -320,8 +323,8 @@ void main(void)
 	RES=0;
 	Delay_1ms(10);
 	RES=1;
-	Delay_1ms(10);				//
-	DC=0;			//			//
+	Delay_1ms(10);				
+	DC=0;						
 	Initial_LY096BG30();
 	Delay_1ms(5);
 	pTime->date = 31;
@@ -343,7 +346,7 @@ void main(void)
     //Timer0 
     INTCONbits.TMR0IF = 0;
     OPTION_REG  =   0b00000000;
-
+w
       
     TMR1H = TMRHVALUE;
     TMR1L = TMRLVALUE;
@@ -360,7 +363,6 @@ void main(void)
         while(1){
 
         }
-        //fill_picture(0xff);
 	
 }
 
