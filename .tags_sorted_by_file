@@ -1,0 +1,138 @@
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_PROGRAM_VERSION	5.8	//
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+BigShow	main.c	/^const unsigned char BigShow[3][11][12]={$/;"	v
+ButtonDown	main.c	/^	ButtonDown,		$/;"	e	enum:Buttons	file:
+ButtonDownL	main.c	/^	ButtonDownL$/;"	e	enum:Buttons	file:
+ButtonSet	main.c	/^int ButtonSet(char button,  Time *pTime){$/;"	f
+ButtonUP	main.c	/^	ButtonUP,			$/;"	e	enum:Buttons	file:
+ButtonUPL	main.c	/^	ButtonUPL,$/;"	e	enum:Buttons	file:
+Buttons	main.c	/^enum Buttons{$/;"	g	file:
+CLICKED	main.c	/^    CLICKED,$/;"	e	enum:StateMachine	file:
+CONTINUE	main.c	/^	CONTINUE,$/;"	e	enum:SetState	file:
+CalWeek	main.c	/^int CalWeek(Time *pTime) {$/;"	f
+DATE	main.c	/^	DATE,$/;"	e	enum:SetState	file:
+DC	main.c	139;"	d	file:
+DOWNBUT	main.c	144;"	d	file:
+Delay_1ms	main.c	/^void Delay_1ms(unsigned int Del_1ms)        \/\/$/;"	f
+Delay_50ms	main.c	/^void Delay_50ms(unsigned int Del_50ms)      \/\/$/;"	f
+DisplayDriver	main.c	/^int DisplayDriver(char state){$/;"	f
+ERROR	main.c	/^	ERROR,$/;"	e	enum:SetState	file:
+FINISH	main.c	/^	FINISH$/;"	e	enum:SetState	file:
+FITST_LINE	main.c	126;"	d	file:
+Fri	main.c	/^	Fri,$/;"	e	enum:Week	file:
+HIGH	main.c	121;"	d	file:
+HOME	main.c	143;"	d	file:
+HOUR	main.c	/^	HOUR,$/;"	e	enum:SetState	file:
+Home	main.c	/^	Home,		$/;"	e	enum:Buttons	file:
+HomeL	main.c	/^	HomeL,$/;"	e	enum:Buttons	file:
+Initial_LY096BG30	main.c	/^void Initial_LY096BG30()$/;"	f
+JudgeDateEn	main.c	/^int JudgeDateEn(Time *pTime) {$/;"	f
+JudgeHourEn	main.c	/^int JudgeHourEn(Time *pTime) {$/;"	f
+JudgeMinuteEn	main.c	/^int JudgeMinuteEn(Time *pTime) {$/;"	f
+JudgeMonthEn	main.c	/^int JudgeMonthEn(Time *pTime) {$/;"	f
+KeyState	main.c	/^char KeyState(){$/;"	f
+LCLICKED	main.c	/^    LCLICKED$/;"	e	enum:StateMachine	file:
+LOW	main.c	122;"	d	file:
+MAXSCAN	main.c	124;"	d	file:
+MINSCAN	main.c	123;"	d	file:
+MINUTE	main.c	/^	MINUTE,$/;"	e	enum:SetState	file:
+MONTH	main.c	/^	MONTH,$/;"	e	enum:SetState	file:
+MainWin	main.c	/^	MainWin,		$/;"	e	enum:ShowList	file:
+Menu	main.c	/^	Menu,			$/;"	e	enum:ShowList	file:
+Mon	main.c	/^	Mon,$/;"	e	enum:Week	file:
+NEXT	main.c	/^	NEXT,$/;"	e	enum:SetState	file:
+NONE	main.c	/^    NONE = 0xf0,$/;"	e	enum:StateMachine	file:
+Picture_MainWin	main.c	/^void Picture_MainWin()$/;"	f
+RES	main.c	138;"	d	file:
+SCL	main.c	140;"	d	file:
+SDA	main.c	141;"	d	file:
+Sat	main.c	/^	Sat$/;"	e	enum:Week	file:
+ScanKey	main.c	/^char ScanKey(){$/;"	f
+Schedule	main.c	/^	Schedule$/;"	e	enum:ShowList	file:
+SetState	main.c	/^enum SetState{$/;"	g	file:
+SetTime	main.c	/^	SetTime,		$/;"	e	enum:ShowList	file:
+ShowLineDate	main.c	/^void ShowLineDate(char y){$/;"	f
+ShowLineTime	main.c	/^void ShowLineTime(char y){$/;"	f
+ShowList	main.c	/^enum ShowList{$/;"	g	file:
+SmallShow	main.c	/^const unsigned char SmallShow[2][11][8]={$/;"	v
+StateMachine	main.c	/^enum StateMachine{$/;"	g	file:
+Sun	main.c	/^	Sun,$/;"	e	enum:Week	file:
+TIMER1CNT	main.c	130;"	d	file:
+TIMERMUL	main.c	131;"	d	file:
+TMRHVALUE	main.c	133;"	d	file:
+TMRLVALUE	main.c	134;"	d	file:
+TMRVALUE	main.c	132;"	d	file:
+Time	main.c	/^typedef struct Time{$/;"	s	file:
+Time	main.c	/^}Time;$/;"	t	typeref:struct:Time	file:
+Tru	main.c	/^	Tru,$/;"	e	enum:Week	file:
+Tue	main.c	/^	Tue,$/;"	e	enum:Week	file:
+UPBUT	main.c	142;"	d	file:
+UpdateTime	main.c	/^int UpdateTime(Time *pTime){$/;"	f
+Wed	main.c	/^	Wed,$/;"	e	enum:Week	file:
+Week	main.c	/^enum Week {$/;"	g	file:
+Write_SPI_Command	main.c	/^void Write_SPI_Command(unsigned char ucCmd)$/;"	f
+Write_SPI_Data	main.c	/^void Write_SPI_Data(unsigned char ucData)$/;"	f
+YEAR	main.c	/^	YEAR,$/;"	e	enum:SetState	file:
+count	main.c	/^char count = 0;$/;"	v
+current	main.c	/^char current = NONE;$/;"	v
+date	main.c	/^	int date;$/;"	m	struct:Time	file:
+fill_picture	main.c	/^void fill_picture(unsigned char fill_Data)$/;"	f
+hour	main.c	/^	int hour;$/;"	m	struct:Time	file:
+isr	main.c	/^void interrupt isr(void)$/;"	f
+key	main.c	/^char key = NONE;$/;"	v
+keyCurrent	main.c	/^char keyCurrent =NONE;$/;"	v
+keyState	main.c	/^char keyState = NONE;$/;"	v
+main	main.c	/^void main(void)$/;"	f
+mainState	main.c	/^char mainState = MainWin;$/;"	v
+minute	main.c	/^	int minute;$/;"	m	struct:Time	file:
+month	main.c	/^	int month;$/;"	m	struct:Time	file:
+pTime	main.c	/^Time *pTime = &time;$/;"	v
+second	main.c	/^	int second;$/;"	m	struct:Time	file:
+setState	main.c	/^char setState = 0;$/;"	v
+time	main.c	/^ime time;$/;"	v
+week	main.c	/^	int week;$/;"	m	struct:Time	file:
+weeker	main.c	/^unsigned char weeker[2][8] = {$/;"	v
+year	main.c	/^	int year;$/;"	m	struct:Time	file:
+ButtonDown	struct.h	/^	ButtonDown,		$/;"	e	enum:Buttons
+ButtonDownL	struct.h	/^	ButtonDownL$/;"	e	enum:Buttons
+ButtonUP	struct.h	/^	ButtonUP,			$/;"	e	enum:Buttons
+ButtonUPL	struct.h	/^	ButtonUPL,$/;"	e	enum:Buttons
+Buttons	struct.h	/^enum Buttons{$/;"	g
+CONTINUE	struct.h	/^	CONTINUE,$/;"	e	enum:SetState
+DATE	struct.h	/^	DATE,$/;"	e	enum:SetState
+ERROR	struct.h	/^	ERROR,$/;"	e	enum:SetState
+FINISH	struct.h	/^	FINISH$/;"	e	enum:SetState
+Fri	struct.h	/^	Fri,$/;"	e	enum:Week
+HOUR	struct.h	/^	HOUR,$/;"	e	enum:SetState
+Home	struct.h	/^	Home,		$/;"	e	enum:Buttons
+HomeL	struct.h	/^	HomeL,$/;"	e	enum:Buttons
+MINUTE	struct.h	/^	MINUTE,$/;"	e	enum:SetState
+MONTH	struct.h	/^	MONTH,$/;"	e	enum:SetState
+MainWin	struct.h	/^	MainWin,		$/;"	e	enum:ShowList
+Menu	struct.h	/^	Menu,			$/;"	e	enum:ShowList
+Mon	struct.h	/^	Mon,$/;"	e	enum:Week
+NEXT	struct.h	/^	NEXT,$/;"	e	enum:SetState
+Sat	struct.h	/^	Sat$/;"	e	enum:Week
+Schedule	struct.h	/^	Schedule$/;"	e	enum:ShowList
+SetState	struct.h	/^enum SetState{$/;"	g
+SetTime	struct.h	/^	SetTime,		$/;"	e	enum:ShowList
+ShowList	struct.h	/^enum ShowList{$/;"	g
+Sun	struct.h	/^	Sun,$/;"	e	enum:Week
+Time	struct.h	/^typedef struct Time{$/;"	s
+Time	struct.h	/^}Time;$/;"	t	typeref:struct:Time
+Tru	struct.h	/^	Tru,$/;"	e	enum:Week
+Tue	struct.h	/^	Tue,$/;"	e	enum:Week
+Wed	struct.h	/^	Wed,$/;"	e	enum:Week
+Week	struct.h	/^enum Week {$/;"	g
+YEAR	struct.h	/^	YEAR,$/;"	e	enum:SetState
+date	struct.h	/^	int date;$/;"	m	struct:Time
+hour	struct.h	/^	int hour;$/;"	m	struct:Time
+minute	struct.h	/^	int minute;$/;"	m	struct:Time
+month	struct.h	/^	int month;$/;"	m	struct:Time
+second	struct.h	/^	int second;$/;"	m	struct:Time
+week	struct.h	/^	int week;$/;"	m	struct:Time
+year	struct.h	/^	int year;$/;"	m	struct:Time

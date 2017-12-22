@@ -50,8 +50,7 @@ typedef struct Time{
 */
 enum ShowList{
 	
-	MainWin,		
-	Menu,			
+	MainWin,				
 	SetTime,		
 	Schedule
 
@@ -302,7 +301,8 @@ void interrupt isr(void)
         //UpdateTime(pTime);
         key = ScanKey();
         KeyState();
-        ButtonSet(keyState, pTime);
+        //ButtonSet(keyState, pTime);
+        ButtonSet();
     }
     if(INTCONbits.TMR0IF == 1){
         INTCONbits.TMR0IF = 0;
@@ -346,7 +346,7 @@ void main(void)
     //Timer0 
     INTCONbits.TMR0IF = 0;
     OPTION_REG  =   0b00000000;
-w
+
       
     TMR1H = TMRHVALUE;
     TMR1L = TMRLVALUE;
@@ -773,8 +773,6 @@ int DisplayDriver(char state){
         case MainWin:
             Picture_MainWin();
             break;
-        case Menu:
-            break;
         case SetTime:
             break;
         case Schedule:
@@ -979,4 +977,40 @@ int ButtonSet(char button,  Time *pTime){
         return CONTINUE;
     }
     return ERROR;
+}
+
+
+
+void ButtonState(){
+
+    switch(state){
+        case MainWin:
+            MainWinButton();
+            break;
+        case SetTime:
+            if(FINISH == ButtonSet(keyState, pTime) || ERROR == ButtonSet(keyState, pTime)){
+                state = MainWin;
+            }
+            break;
+        case Schedule:
+            break;
+    }
+
+}
+
+
+void MainWinButton(){
+
+    switch(keyState){
+        case ButtonUPL:
+            state = SetTime;
+            setState = YEAR;
+            break;
+        case ButtonDownL:
+            state = Schedule;
+            break;
+        default:
+            break;
+    }
+
 }
