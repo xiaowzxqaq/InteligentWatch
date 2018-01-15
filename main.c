@@ -93,7 +93,7 @@ enum Buttons{
 */
 enum SetState{
 	
-	ERROR,
+	STARTSET,
 	YEAR,
 	MONTH,
 	DATE,
@@ -101,6 +101,7 @@ enum SetState{
 	MINUTE,
 	NEXT,
 	CONTINUE,
+    ERROR,
 	FINISH
 };
 
@@ -134,13 +135,13 @@ enum StateMachine{
 /***********************************/
 
 /*************Pin Define*************/
-#define RES (PORTAbits.RA2)
-#define DC (PORTAbits.RA3)
-#define SCL (PORTAbits.RA0)
-#define SDA (PORTAbits.RA1)
-#define UPBUT (PORTAbits.RA4)
-#define HOME (PORTAbits.RA5)
-#define DOWNBUT (PORTAbits.RA6)
+#define RES (PORTCbits.RC6)
+#define DC (PORTCbits.RC7)
+#define SCL (PORTBbits.RB4)
+#define SDA (PORTBbits.RB3)
+#define UPBUT (PORTCbits.RC2)
+#define HOME (PORTCbits.RC3)
+#define DOWNBUT (PORTCbits.RC4)
 /***********************************/
 
 
@@ -160,8 +161,11 @@ int UpdateTime(Time *pTime);
 /**************Show*************/
 void ShowLineDate(char y);
 void ShowLineTime(char y);
+void ShowLineSet(char y);
 int ButtonSet(char button,  Time *pTime);
-
+void ButtonState();
+void MainWinButton();
+void Picture_Set();
 /**************Button*************/
 char KeyState();
 char ScanKey();
@@ -271,14 +275,20 @@ unsigned char weeker[2][8] = {
 0x3F, 0x00, 0x0E, 0x0A, 0x0A, 0x0E, 0x20, 0x7F
 };
 
+unsigned char setTime[2][2][8] = {
+0x10,0xDC,0x30,0x80,0xF8,0x08,0xF8,0x80,
+0x00,0x5E,0x52,0xDE,0x72,0x5E,0x52,0x5E,
+0x3C,0x13,0x08,0x22,0x16,0x0A,0x16,0x22,
+0x00,0x40,0x7F,0x55,0x55,0x55,0x7F,0x40
+};
 
 /******************Gloable Variables**********************/
 //Time which needed to be updated
-ime time;
+Time time;
 Time *pTime = &time;
 
 //State Mark
-char mainState = MainWin;
+char state = MainWin;
 
 //Button Mark
 char current = NONE;
@@ -299,14 +309,18 @@ void interrupt isr(void)
     if(PIR1bits.TMR1IF == 1){
         PIR1bits.TMR1IF = 0;   
         //UpdateTime(pTime);
-        key = ScanKey();
-        KeyState();
-        //ButtonSet(keyState, pTime);
-        ButtonSet();
+        UpdateTime(pTime);
+    }
+    if(PIR1bits.TMR2IF == 1){
+       PIR1bits.TMR2IF = 0; 
+       key = ScanKey();
+       KeyState();
+       ButtonState();
+
     }
     if(INTCONbits.TMR0IF == 1){
         INTCONbits.TMR0IF = 0;
-        DisplayDriver(mainState);
+        DisplayDriver(state);
     }
     
 
@@ -317,9 +331,11 @@ void interrupt isr(void)
 void main(void)
 {
     OSCCONbits.IRCF = 0b1101;
-    LATA = 0x00;
-    ANSELA = 0x00;
-    TRISA = 0x00;
+    LATB = 0x00;
+    ANSELB = 0x00;
+    TRISB = 0x00;
+    LATC = 0X00;
+    TRISC=0X00;
 	RES=0;
 	Delay_1ms(10);
 	RES=1;
@@ -339,8 +355,12 @@ void main(void)
     INTCONbits.PEIE = 1;
     
     PIR1bits.TMR1IF = 0;
+    PIR1bits.TMR2IF = 0;
   
     PIE1bits.TMR1IE = 1;
+    PIE1bits.TMR2IE = 1;
+    PR2 = 0Xff;
+
     
     INTCONbits.IOCIE = 1;
     //Timer0 
@@ -352,17 +372,19 @@ void main(void)
     TMR1L = TMRLVALUE;
   
     T1CON = 0b00001101;
-    T1CONbits.T1CKPS = 0b00;
-    TRISAbits.TRISA4 = 1;
-    TRISAbits.TRISA5 = 1;
-    TRISAbits.TRISA6 = 1;
-    WPUAbits.WPUA4 = 1;
-    WPUAbits.WPUA5 = 1;
-    WPUAbits.WPUA6 = 1;
-            
+    T1CONbits.T1CKPS = 0b11;
+    T2CON = 0b00000100;
+    TRISCbits.TRISC2 = 1;
+    TRISCbits.TRISC3 = 1;
+    TRISCbits.TRISC4 = 1;
+    WPUCbits.WPUC2 = 1;
+    WPUCbits.WPUC3 = 1;
+    WPUCbits.WPUC4 = 1;
+    LATBbits.LATB5 = 1;
         while(1){
 
         }
+        //fill_picture(0xff);
 	
 }
 
@@ -618,6 +640,28 @@ void ShowLineDate(char y){
 
 }
 
+
+
+void ShowLineSet(char y){
+
+    char i = 0;
+    //margin
+    for (i = 0; i < 12; i++){
+        Write_SPI_Data(0x00);
+    }
+    for(i = 0; i < 8; i++){
+        Write_SPI_Data(setTime[y][0][i]);
+    }
+    for (i = 0; i < 4; i++){
+        Write_SPI_Data(0x00);
+    }
+    for(i = 0; i < 8; i++){
+        Write_SPI_Data(setTime[y][1][i]);
+    }
+    for (i = 0; i < 96; i++){
+        Write_SPI_Data(0x00);
+    }
+}
 /*********************/
 void Write_SPI_Data(unsigned char ucData)
 {
@@ -751,6 +795,59 @@ void Picture_MainWin()
 }
 
 
+
+
+void Picture_Set()
+{
+  char x,y;
+
+  for(y=0;y<8;y++)
+    {
+      Write_SPI_Command(0xb0+y);
+      Write_SPI_Command(0x00);
+      Write_SPI_Command(0x10);
+      switch(y){
+            case 0:
+                ShowLineSet(y);
+                break;
+            case 1:
+                ShowLineSet(y);
+                break;
+            case 2:
+                ShowLineTime(y);
+                break;
+            case 3:
+                ShowLineTime(y);
+                break;
+            case 4:
+                ShowLineTime(y);
+                break;
+            case 5:
+                for(x=0;x<128;x++)
+                {
+                    Write_SPI_Data(0x00);
+                }
+                break;
+            case 6:
+                ShowLineDate(y);
+                break;
+            case 7:
+                ShowLineDate(y);
+                break;
+          default:
+                for(x=0;x<128;x++)
+                {
+                    Write_SPI_Data(0x00);
+                }
+                break;
+                        
+      }
+
+
+    }
+  
+}
+
 /***********************Delay****************************************/
 void Delay_50ms(unsigned int Del_50ms)      //
 {
@@ -774,6 +871,7 @@ int DisplayDriver(char state){
             Picture_MainWin();
             break;
         case SetTime:
+            Picture_Set();
             break;
         case Schedule:
             break;
@@ -915,6 +1013,9 @@ int ButtonSet(char button,  Time *pTime){
         return NEXT;
     }
     if(ButtonUPL == button){
+        if(STARTSET == setState){
+            return STARTSET;
+        }
         if(YEAR == setState){
             return FINISH;
         }
@@ -988,11 +1089,16 @@ void ButtonState(){
             MainWinButton();
             break;
         case SetTime:
-            if(FINISH == ButtonSet(keyState, pTime) || ERROR == ButtonSet(keyState, pTime)){
+            if(FINISH == ButtonSet(keyState, pTime)){
                 state = MainWin;
+                T1CONbits.TMR1ON = 1;
             }
             break;
         case Schedule:
+            if(HomeL == keyState){
+                LATBbits.LATB5 = 1;
+                state = MainWin;
+            }
             break;
     }
 
@@ -1004,10 +1110,12 @@ void MainWinButton(){
     switch(keyState){
         case ButtonUPL:
             state = SetTime;
-            setState = YEAR;
+            T1CONbits.TMR1ON = 0;
+            setState = STARTSET;
             break;
         case ButtonDownL:
             state = Schedule;
+            LATBbits.LATB5 = 0;
             break;
         default:
             break;
