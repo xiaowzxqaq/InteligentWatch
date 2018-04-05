@@ -24,7 +24,6 @@
 
 
 
-
 /************Struct Define***********/
 /*
 	Struct: Time
@@ -129,7 +128,7 @@ enum StateMachine{
 /************Timer******************/
 #define TIMER1CNT 1
 #define TIMERMUL 1
-#define TMRVALUE (65536 - TIMER1CNT) 
+#define TMRVALUE (200 - TIMER1CNT) 
 #define TMRHVALUE (TMRVALUE>>8) 
 #define TMRLVALUE ((char)TMRVALUE)
 /***********************************/
@@ -139,9 +138,10 @@ enum StateMachine{
 #define DC (PORTCbits.RC7)
 #define SCL (PORTBbits.RB4)
 #define SDA (PORTBbits.RB3)
-#define UPBUT (PORTCbits.RC2)
+#define UPBUT (PORTCbits.RC4)
 #define HOME (PORTCbits.RC3)
-#define DOWNBUT (PORTCbits.RC4)
+#define DOWNBUT (PORTCbits.RC2)
+
 /***********************************/
 
 
@@ -307,9 +307,21 @@ void interrupt isr(void)
     
 
     if(PIR1bits.TMR1IF == 1){
-        PIR1bits.TMR1IF = 0;   
-        //UpdateTime(pTime);
+
+        
+
+
+//        ptimer.timeh = TMR1H;
+//        ptimer.timel = TMR1L;
+//        ptimer.time1 += 0x8000;
+//        TMR1L = ptimer.timel;
+//        TMR1H = ptimer.timeh;
+
+        TMR1H += 0x80;
+        PIR1bits.TMR1IF = 0;
         UpdateTime(pTime);
+
+
     }
     if(PIR1bits.TMR2IF == 1){
        PIR1bits.TMR2IF = 0; 
@@ -347,10 +359,10 @@ void main(void)
     pTime->year = 2017;
     pTime->hour = 23;
     pTime->minute = 59;
-    pTime->second = 24;
+    pTime->second = 59;
     pTime->month = 12;
     
-    
+
     INTCONbits.GIE = 1;
     INTCONbits.PEIE = 1;
     
@@ -368,11 +380,14 @@ void main(void)
     OPTION_REG  =   0b00000000;
 
       
-    TMR1H = TMRHVALUE;
-    TMR1L = TMRLVALUE;
+    TMR1H = 0x80;
+    TMR1L = 0x00;
   
     T1CON = 0b00001101;
-    T1CONbits.T1CKPS = 0b11;
+    T1CONbits.T1CKPS = 0b00;
+    T1CONbits.TMR1CS = 0b10;
+    T1CONbits.T1OSCEN = 0b1;
+    
     T2CON = 0b00000100;
     TRISCbits.TRISC2 = 1;
     TRISCbits.TRISC3 = 1;
@@ -381,6 +396,7 @@ void main(void)
     WPUCbits.WPUC3 = 1;
     WPUCbits.WPUC4 = 1;
     LATBbits.LATB5 = 1;
+    PORTBbits.RB5 = 1;
         while(1){
 
         }
